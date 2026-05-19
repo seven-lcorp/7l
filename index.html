@@ -1,0 +1,862 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta charset="UTF-8"/>
+<title>Seven-L Corporation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+<style>
+*{
+    margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;
+}
+
+html,body{
+    width:100%;overflow-x:hidden;background:#f4f4f4;color:#000;
+}
+
+.hidden{
+    display:none;
+}
+
+.info-bar{
+    background:#2f6b3f;color:#fff;padding:6px 15px;display:flex;justify-content:center;gap:20px;font-size:12px;flex-wrap:wrap;
+}
+
+    .header{
+        position:sticky;
+        top:0;
+        z-index:9999;
+        background:#fff;
+        box-shadow:0 2px 5px rgba(0,0,0,.1);
+        transition:box-shadow 0.3s;
+        padding:20px 0;
+    }
+    body.scrolling-down .header{
+        box-shadow:0 4px 10px rgba(0,0,0,.2);
+    }
+    body.scrolling-up .header{
+        box-shadow:0 2px 5px rgba(0,0,0,.1);
+    }
+    .navbar{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        flex-wrap:wrap;
+        position:relative;
+        padding:0 20px;
+    }
+    .menu{
+        display:flex;
+        gap:15px;
+        text-align:left;
+        font-size:14px;
+        font-weight:bold;
+        flex-wrap:wrap;
+        transition:0.3s;
+    }
+    .menu a{
+        cursor:pointer;
+        color:#000;
+        text-decoration:none;
+        position:relative;
+        transition:0.3s;
+    }
+    .menu a:hover{
+        color:#2f6b3f;
+    }
+    .menu a::after{
+        content:'';
+        position:absolute;
+        bottom:-3px;
+        left:0;
+        width:0;
+        height:2px;
+        background:#2f6b3f;
+        transition:0.3s;}
+    .menu a:hover::after{
+        width:100%;
+    }
+    .logo{
+        width:120px;
+        height:80px;
+        object-fit:contain;
+        cursor:pointer;
+    }
+.header-icons{display:flex;gap:10px;align-items:center;}
+.header-icons a{color:#000;text-decoration:none;font-size:16px;position:relative;transition:0.3s;}
+.header-icons a:hover{color:#2f6b3f;}
+.search-box{position:relative;display:flex;align-items:center;}
+.search-box input{position:absolute;right:25px;width:0;opacity:0;padding:6px 10px;border-radius:15px;border:1px solid #ccc;font-size:12px;transition:0.4s ease;}
+.search-box.active input{width:150px;opacity:1;}
+.search-box i{cursor:pointer;}
+.hamburger{display:none;font-size:22px;cursor:pointer;z-index:10000;}
+
+    @media(max-width:768px){
+        .hamburger{display:block;
+    }
+    .menu{
+        display:none;
+        position:absolute;
+        top:100%;
+        left:0;
+        width:100%;
+        background:rgba(255,255,255,0.95);
+        flex-direction:column;
+        padding:10px 0;
+        box-shadow:0 4px 10px rgba(0,0,0,.2);
+    }
+    .menu.active{display:flex;}
+    }
+.top{display:flex;gap:15px;padding:15px;flex-wrap:wrap;min-height:420px;}
+.ads{flex:1;min-width:260px;aspect-ratio:16/9;position:relative;overflow:hidden;border-radius:8px;}
+.ads-slider{width:100%;height:100%;position:relative;}
+.ads-slider img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s ease-in-out;}
+.ads-slider img.active{opacity:1;}
+.video-wrapper{
+        flex:1;
+        min-width:260px;
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        position:relative;
+    }
+
+    .section{
+        padding:15px;
+        min-height:220px;
+    }
+    .section h2{
+        text-align:center;
+        margin-bottom:12px;
+        font-size:16px;
+    }
+
+    .slider-container{
+        width:100%;
+        overflow-x:auto;
+        position:relative;
+    }
+
+    .slider{
+        display:flex;
+        gap:15px;
+        width:max-content;
+        padding-bottom:10px;
+        scroll-behavior:smooth;
+    }
+
+.centered-slider{justify-content:center;margin:auto;}
+.slider::-webkit-scrollbar{height:6px;}
+.slider::-webkit-scrollbar-thumb{background:#888;border-radius:10px;}
+    .box,.tile{
+        flex:0 0 140px;
+        height:180px;
+        border-radius:8px;
+        overflow:hidden;
+        text-align:center;
+        position:relative;
+        box-shadow:0 2px 6px rgba(0,0,0,.2);
+        transition:transform 0.3s,box-shadow 0.3s;
+    }
+    .box img,.tile img{
+        width:100%;
+        height:100%;
+        object-fit:fill;
+    }
+    .box:hover,.tile:hover{
+        transform:translateY(-5px) scale(1.05);
+        box-shadow:0 6px 15px rgba(0,0,0,.25);
+    }
+
+    .gallery {
+        height:80%;
+        margin-left:0.5em;
+        margin-bottom:1em;
+        border-radius:9px;
+        box-shadow:0 6px 15px rgba(0,0,0,.25);
+    }
+
+    .button {
+	    border: 2px solid black;
+	    background-color: white;
+	    color: black;
+	    padding: 9px 9px;
+	    font-size: 10pt;
+	    cursor: pointer;
+	    border-color: #04AA6D;
+        border-radius:20px;
+        color: green;
+    }
+
+    .button:hover{
+	    background-color: #04AA6D;
+        color: white;
+    }
+
+    .button:disabled {
+	    background: #c9e1f5;
+	    color: white;
+    }
+
+.overlay-text{position:absolute;bottom:0;width:100%;background:rgba(0,0,0,.5);color:#fff;font-size:12px;text-align:center;padding:5px;}
+.slider-container .arrow{display:none;position:absolute;top:50%;transform:translateY(-50%);font-size:22px;color:#2f6b3f;z-index:10;user-select:none;transition:transform 0.2s ease;}
+.slider-container .arrow:hover{transform:translateY(-50%) scale(1.2);}
+.slider-container .arrow.left{left:-20px;}
+.slider-container .arrow.right{right:-20px;}
+@media(max-width:768px){.slider-container .arrow{display:block;}}
+.auth-page{display:flex;justify-content:center;align-items:flex-start;min-height:80vh;padding:20px;gap:20px;flex-wrap:wrap;}
+.auth-box{background:#fff;padding:20px;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,.2);width:280px;max-width:90%;}
+.auth-box h2{text-align:center;margin-bottom:15px;}
+.auth-box input{width:100%;padding:8px;margin:8px 0;border-radius:5px;border:1px solid #ccc;}
+.auth-box button{width:100%;padding:10px;background:#2f6b3f;color:#fff;border:none;border-radius:5px;cursor:pointer;transition:0.3s;}
+.auth-box button:hover{background:#24512e;}
+.auth-box p{font-size:12px;text-align:center;margin-top:8px;}
+.auth-box a{color:#2f6b3f;text-decoration:none;}
+
+    
+@media (max-width: 768px) {
+    
+    body, .homepage-content {
+        padding: 0 10px;
+        margin: 0;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+
+    .homepage-content img,
+    .homepage-content iframe {
+        max-width: 100%;
+        height: auto;
+    }
+
+  
+    .partners-slider {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .partners-slider .partner-item {
+        flex: 0 0 auto;
+        width: 80%;
+        margin-right: 10px;
+        scroll-snap-align: start;
+    }
+
+  
+    h1, h2, h3, p {
+        font-size: 90%;
+    }
+}
+
+
+</style>
+    
+</head>
+<body>
+
+<div class="info-bar">
+    <div><i class="fa fa-phone"></i>  (046) 853 0532</div>
+    <div><i class="fa fa-envelope"></i>  lexuesbio@yahoo.com</div>
+    <div><i class="fa fa-location-dot"></i>  Block 20 lot 1 barangay san dionisio 4114 Dasmariñas, Philippines</div>
+</div>
+
+
+<div class="header">
+    <div class="navbar">
+        <div class="hamburger"><i class="fa fa-bars"></i></div>
+        <img src="images/sevenl.png" class="logo" data-page="home" />
+        <div class="menu">
+            <a data-page="home">HOME</a>
+            <a data-page="about">ABOUT US</a>
+            <a data-page="shop">SHOP</a>
+            <a data-page="services">SERVICES</a>
+            <a data-page="gallery">GALLERY</a>
+            <a data-page="blog">BLOG</a>
+            <a data-page="contact">CONTACT US</a>
+        </div>
+        
+        <div class="header-icons">
+            <div class="search-box"><i class="fa fa-search"></i><input type="text" placeholder="Search products..."/></div>
+            <a href="#favorites"><i class="fa fa-heart"></i></a>
+            <a href="#cart"><i class="fa fa-cart-shopping"></i></a>
+            <a href="#login"><i class="fa fa-user login-icon"></i></a>
+        </div>
+    </div>
+</div>
+
+
+<div id="home" class="page-content">
+    <div class="top">
+        <div class="ads">
+            <div class="ads-slider">
+                <img src="images/ads/ads1.png" class="active"/>
+                <img src="images/ads/ads2.png"/>
+                <img src="images/ads/ads3.png"/>
+                <img src="images/ads/ads4.png"/>
+                <!--video src="images/ads/ads-video1.mp4" autoplay muted controls style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;"></video-->
+            </div>
+        </div>
+        <div class="video-wrapper">
+            <iframe src="images/7l Updated-video.mp4" style="height:200px;"></iframe>
+            <!--iframe src="images/ads/ads-video1.mp4" style="height:300px;"></iframe-->
+            <video src="images/ads/ads-video1.mp4" autoplay muted controls style="width:100%;height:300px;"></video>
+            <div class="section">
+                <h2>Partners & Distributors</h2>
+                <div class="slider-container">
+                    <div class="slider partners">
+                        <div class="box">
+                            <img src="images/partners/partner1.png" style="height:95px;margin-bottom:0.5em;" />
+                            <input type="button" class="button" value="Learn More" onclick="show('emka');" />
+                        </div>
+                        <div class="box">
+                            <img src="images/partners/partner2.png" style="height:95px;margin-bottom:0.5em;"/>
+                            <input type="button" class="button" value="Learn More" onclick="show('karoon');" />
+                        </div>
+                        <div class="box">
+                            <img src="images/partners/partner3.png" style="height:95px;margin-bottom:0.5em;"/>
+                            <input type="button" class="button" value="Learn More" onclick="show('bayle');" />
+                        </div>
+                        <div class="box">
+                            <img src="images/partners/partner4.png" style="height:95px;margin-bottom:0.5em;"/>
+                            <input type="button" class="button" value="Learn More" onclick="show('yiyuan');" />
+                        </div>
+                        <div class="box">
+                            <img src="images/partners/partner5.png" style="height:95px;margin-bottom:0.5em;"/>
+                            <input type="button" class="button" value="Learn More" onclick="show('ecotec');" />
+                        </div>
+                        <div class="box">
+                            <img src="images/partners/partner6.png" style="height:95px;margin-bottom:0.5em;"/>
+                            <input type="button" class="button" value="Learn More" onclick="show('systel');" />
+                        </div>
+                        <div class="box">
+                            <img src="images/partners/partner7.png" style="height:95px;margin-bottom:0.5em;"/>
+                            <input type="button" class="button" value="Learn More" onclick="show('aza');" />
+                        </div>
+                        <div class="box">
+                            <img src="images/partners/partner8.png" style="height:95px;margin-bottom:0.5em;"/>
+                            <input type="button" class="button" value="Learn More" onclick="show('ntd');" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="section">
+        <h2>Browse our Categories</h2>
+        <div class="slider-container">
+            <div class="arrow left">&#10094;</div>
+            <div class="slider centered-slider">
+                <div class="box"><img src="images/categories/water-mixing-tools.png"/><div class="overlay-text">Water Mixing Tools</div></div>
+                <div class="box"><img src="images/categories/plastic-flooring.png"/><div class="overlay-text">Plastic Flooring</div></div>
+                <div class="box"><img src="images/categories/anemometer.png"/><div class="overlay-text">Anemometer</div></div>
+                <div class="box"><img src="images/categories/farm-fans.png"/><div class="overlay-text">Farm Fans</div></div>
+            </div>
+            <div class="arrow right">&#10095;</div>
+        </div>
+    </div>
+
+    
+    <div class="section">
+        <h2>Best Selling Products</h2>
+        <div class="slider-container">
+            <div class="slider centered-slider">
+                <div class="tile"><img src="images/best-selling/pig-feeder.png"><div class="overlay-text">Pig Feeder</div></div>
+                <div class="tile"><img src="images/best-selling/water-mixer.png"><div class="overlay-text">Water Mixer</div></div>
+                <div class="tile"><img src="images/best-selling/farm-fan.png"><div class="overlay-text">Farm Fan</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="shop" class="page-content hidden">
+    <div class="section">
+        <h2>Shop Products</h2>
+        <div class="slider-container">
+            <div class="slider centered-slider">
+                <div class="tile"><img src="images/best-selling/pig-feeder.png"/><div class="overlay-text">Pig Feeder</div></div>
+                <div class="tile"><img src="images/best-selling/water-mixer.png"/><div class="overlay-text">Water Mixer</div></div>
+                <div class="tile"><img src="images/categories/plastic-flooring.png"/><div class="overlay-text">Plastic Flooring</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="gallery" class="page-content hidden">
+    <div class="section">
+        <div style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2)), url('images/ads/ads4.png');
+              background-size: cover;height:150px; margin-bottom:1em;
+              display:flex;align-items:center;justify-content:center;">
+            <h1 style="color:white;font-size:32px;text-align:center;text-shadow:2px 2px 8px rgba(0,0,0,0.6);line-height:1.3;">
+              Gallery<br/>
+              <span style="font-size:20px;font-weight:400;">
+                  Find eco-friendly technology at Seven-L Agrifood Systems and be a part of our journey towards a brighter future.
+              </span>
+            </h1>
+        </div>
+        <div style="overflow-y:auto; width:100%;height:450px;">
+            <img src="images/gallery/gallery1.png" class="gallery"/>
+            <img src="images/gallery/gallery2.png" class="gallery" />
+            <img src="images/gallery/gallery3.png" class="gallery" />
+            <img src="images/gallery/gallery4.png" class="gallery" />
+            <img src="images/gallery/gallery5.png" class="gallery" />
+            <img src="images/gallery/gallery6.png" class="gallery" />
+            <img src="images/gallery/gallery7.png" class="gallery" />
+            <img src="images/gallery/gallery8.png" class="gallery" />
+            <img src="images/gallery/gallery9.png" class="gallery" />
+            <img src="images/gallery/gallery10.png" class="gallery" />
+
+            <img src="images/gallery/gallery11.png" class="gallery"/>
+            <img src="images/gallery/gallery12.png" class="gallery" />
+            <img src="images/gallery/gallery13.png" class="gallery" />
+            <img src="images/gallery/gallery14.png" class="gallery" />
+            <img src="images/gallery/gallery15.png" class="gallery" />
+            <img src="images/gallery/gallery16.png" class="gallery" />
+            <img src="images/gallery/gallery17.png" class="gallery" />
+            <img src="images/gallery/gallery18.png" class="gallery" />
+            <img src="images/gallery/gallery19.png" class="gallery" />
+            <img src="images/gallery/gallery20.png" class="gallery" />
+
+            <img src="images/gallery/gallery21.png" class="gallery"/>
+            <img src="images/gallery/gallery22.png" class="gallery" />
+            <img src="images/gallery/gallery23.png" class="gallery" />
+            <img src="images/gallery/gallery24.png" class="gallery" />
+            <img src="images/gallery/gallery25.png" class="gallery" />
+            <img src="images/gallery/gallery26.png" class="gallery" />
+            <img src="images/gallery/gallery27.png" class="gallery" />
+            <img src="images/gallery/gallery28.png" class="gallery" />
+            <img src="images/gallery/gallery29.png" class="gallery" />
+            <img src="images/gallery/gallery30.png" class="gallery" />
+
+            <img src="images/gallery/gallery31.png" class="gallery"/>
+            <img src="images/gallery/gallery32.png" class="gallery" />
+            <img src="images/gallery/gallery33.png" class="gallery" />
+            <img src="images/gallery/gallery34.png" class="gallery" />
+            <img src="images/gallery/gallery35.png" class="gallery" />
+            <img src="images/gallery/gallery36.png" class="gallery" />
+            <img src="images/gallery/gallery37.png" class="gallery" />
+            <img src="images/gallery/gallery38.png" class="gallery" />
+            <img src="images/gallery/gallery39.png" class="gallery" />
+            <img src="images/gallery/gallery40.png" class="gallery" />
+
+            <iframe src="images/gallery/video1.mp4" style="height:576px;width:1024px;"></iframe>
+        </div>
+    </div>
+</div>
+
+
+<div id="about" class="page-content hidden" style="font-family:'Poppins',sans-serif;line-height:1.7;color:#333;">
+  <div style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2)), url('images/ads/ads4.png');
+        background-size: cover;height:300px;
+        display:flex;align-items:center;justify-content:center;">
+    <h1 style="color:white;font-size:32px;text-align:center;text-shadow:2px 2px 8px rgba(0,0,0,0.6);line-height:1.3;">
+        Seven-L Agrifood Systems, Inc.<br/>
+        <span style="font-size:20px;font-weight:400;">Assembles Modern Technologies in Poultry and Livestock Farming and Processing</span>
+    </h1>
+  </div>
+  <div style="max-width:1200px;margin:auto;margin-top:40px;display:flex;flex-wrap:wrap;gap:30px;align-items:flex-start;
+    font-family:'Poppins',sans-serif;line-height:1.6;color:#333;">
+      <div style="flex:1;min-width:250px;max-width:350px;text-align:center;">
+          <img src="images/LEX-VICTOR-D.-EUSEBIO.png"
+               alt="LEX VICTOR D. EUSEBIO" 
+               style="width:100%;height:auto;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,0.2);border:3px solid #2f6b3f;transition:transform 0.3s;" 
+               onmouseover="this.style.transform='scale(1.05)';" 
+               onmouseout="this.style.transform='scale(1)';" />
+          <div style="margin-top:15px;">
+              <h2 style="font-size:22px;font-weight:700;margin-bottom:5px;color:#000000;">LEX VICTOR D. EUSEBIO</h2>
+              <p style="margin:0;font-weight:500;color:#0b8a15;font-size:16px;">President / CEO – 2018-PRESENT</p>
+              <p style="margin:5px 0 0;font-weight:600;font-size:16px;color:#0b8a15;">SEVEN-L AGRIFOOD SYSTEMS, INC.</p>
+          </div>
+      </div>
+     
+      <div style="flex:2;min-width:300px;background:#f9f9f9;padding:25px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,0.1);">
+          <p><strong><span style="color: #000000;">Seven-L Agrifood Systems, Inc.</span></strong> is a well-established company quite known as a World-Class Distributor of Poultry and Livestock Equipment and Services satisfying the needs of the integrators and their business partners. Seven-L was developed and organized from the old single proprietorship 7L Agri-Food Systems Enterprise since December 19,2011.</p>
+
+          <p><strong><span style="color: #000000;">7L Agri-Food Systems Enterprises</span></strong> was established on April 18, 2001 after its founder, the late LEONIDO G. EUSEBIO, resigned from Manila Machinery and Supply Co., Inc.</p>
+
+          <p>In its first year, 7L focused on sales to large companies such as Robina Farms, Sustamina Agri-Industrial Corporation, Mirandel Dressing Plant (Vitarich partner), Tyson Agri-Ventures, Inc., Swift Foods, Inc., and Foster Foods.</p>
+
+          <p>Through dedication and hard work, 7L expanded rapidly, building a new warehouse and office by its third year, and was formally incorporated as Seven-L in 2012.</p>
+
+          <p>Today, the company holds distributorships with suppliers like Excellence Supply and Services, Inc., KSP and Karoon Brothers (Thailand), TienPhatDat (Vietnam), Systel gas brooders (France), Waterflame environment controls (Thailand), Newtech District prefab buildings (France), AZA International (Italy), and more.</p>
+
+          <p>Now managed by Lex Victor G. Eusebio alongside the original team, Seven-L Agrifood Systems Inc. is ISO 9001-2015 certified and continues to grow nationwide.</p>
+      </div>
+
+  </div>
+
+  <div style="max-width:1200px;margin:auto;margin-top:50px;display:flex;flex-wrap:wrap;gap:20px;">
+      
+      <div style="flex:1;min-width:300px;background:#f0f7f2;padding:30px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,0.1);">
+          <h2 style="color:#2f6b3f;text-align:center;margin-bottom:15px;font-weight:600;">Vision</h2>
+          <p style="text-align:center;font-size:16px;">To become a one-stop marketing company of efficient poultry and livestock equipment and allied lines and to ensure customer satisfaction.</p>
+      </div>
+
+      
+      <div style="flex:1;min-width:300px;background:#f0f7f2;padding:30px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,0.1);">
+          <h2 style="color:#2f6b3f;text-align:center;margin-bottom:15px;font-weight:600;">Mission</h2>
+          <p style="text-align:center;font-size:16px;">To be a major player in the supply and installation of poultry and livestock equipment to poultry farms, integrators, food processors, hog and other livestock farms in the Philippines.</p>
+      </div>
+  </div>
+
+ 
+  <section style="width:100%;margin:40px 0;padding:20px;border-radius:15px;background:#2f6b3f;border:3px solid #2f6b3f;box-sizing:border-box;font-family:'Poppins',sans-serif;color:#fff;line-height:1.5;">
+
+      <div style="display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;">
+
+         
+          <div style="flex:1;min-width:200px;">
+              <h2 style="text-align:center;margin-bottom:12px;font-weight:700;letter-spacing:1px;font-size:20px;">CORE VALUES</h2>
+
+              <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
+                  <div style="font-size:24px;font-weight:700;color:#a8e6a2;">S</div>
+                  <div style="font-size:15px;">Service oriented</div>
+              </div>
+
+              <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
+                  <div style="font-size:24px;font-weight:700;color:#a8e6a2;">E</div>
+                  <div style="font-size:15px;">Excellence in every action</div>
+              </div>
+
+              <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
+                  <div style="font-size:24px;font-weight:700;color:#a8e6a2;">V</div>
+                  <div style="font-size:15px;">Vigor in improvement</div>
+              </div>
+
+              <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
+                  <div style="font-size:24px;font-weight:700;color:#a8e6a2;">E</div>
+                  <div style="font-size:15px;">Efficiency in work</div>
+              </div>
+
+              <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
+                  <div style="font-size:24px;font-weight:700;color:#a8e6a2;">N</div>
+                  <div style="font-size:15px;">Noteworthy performance</div>
+              </div>
+
+              <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
+                  <div style="font-size:24px;font-weight:700;color:#a8e6a2;">L</div>
+                  <div style="font-size:15px;">Loyalty to customer</div>
+              </div>
+          </div>
+
+      
+          <div style="flex:1;min-width:200px;">
+              <h2 style="text-align:center;margin-bottom:12px;font-weight:700;letter-spacing:1px;font-size:20px;">QUALITY POLICY</h2>
+
+              <ul style="list-style:none;padding-left:0;line-height:1.5;font-size:14px;">
+                  <li style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;">
+                      <span style="color:#a8e6a2;font-size:16px;line-height:1;"><i class="fas fa-check-circle"></i></span>
+                      <span>Regularly work to improve our inventory mix to respond quickly to customer orders.</span>
+                  </li>
+                  <li style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;">
+                      <span style="color:#a8e6a2;font-size:16px;line-height:1;"><i class="fas fa-check-circle"></i></span>
+                      <span>Select only quality-oriented external providers who can meet or exceed our requirements.</span>
+                  </li>
+                  <li style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;">
+                      <span style="color:#a8e6a2;font-size:16px;line-height:1;"><i class="fas fa-check-circle"></i></span>
+                      <span>Maintain high-quality standards as we design the most efficient poultry and livestock solutions nationwide.</span>
+                  </li>
+              </ul>
+          </div>
+
+      </div>
+  </section>
+
+  
+  <div class="capabilities-section">
+
+    <div class="capabilities-text">
+      <h2>Capabilities and Expertise</h2>
+      <p class="intro">
+        Seven-L Agrifood Systems innovates farming, benefiting farmers and communities. Join us to create a sustainable agrifood future.
+      </p>
+
+      <div class="ha-icon-box">
+        <span class="ha-icon-box-icon"><i class="fas fa-chart-pie"></i></span>
+        <h3 class="ha-icon-box-title">Wider range of products in the market</h3>
+      </div>
+
+      <div class="ha-icon-box">
+        <span class="ha-icon-box-icon"><i class="fas fa-users"></i></span>
+        <h3 class="ha-icon-box-title">Pool of technical staff with extensive experience in the installation of cooling pad systems, auto feeding, nipple drinking systems, medicators, and poultry dressing plants</h3>
+      </div>
+
+      <div class="ha-icon-box">
+        <span class="ha-icon-box-icon"><i class="fas fa-users-cog"></i></span>
+        <h3 class="ha-icon-box-title">Proactive principals in the promotion and use of products for maximum efficiency</h3>
+      </div>
+    </div>
+
+
+    <div class="capabilities-carousel">
+      <div class="swiper capabilities-swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide"><img src="images/ads/ads1.png" alt="Ad 1"/></div>
+          <div class="swiper-slide"><img src="images/ads/ads2.png" alt="Ad 2"/></div>
+          <div class="swiper-slide"><img src="images/ads/ads3.png" alt="Ad 3"/></div>
+          <div class="swiper-slide"><img src="images/ads/ads4.png" alt="Ad 4"/></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+  <script>
+      var capabilitiesSwiper = new Swiper('.capabilities-swiper', {
+          slidesPerView: 1,
+          loop: true,
+          effect: 'fade',
+          autoplay: {
+              delay: 2500,
+              disableOnInteraction: false,
+          },
+          speed: 900,
+      });
+  </script>
+
+
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  
+  <div style="margin-top:60px;
+            text-align:center;
+            font-size:14px;
+            background:#2f6b3f;
+            color:#ffffff;
+            padding:30px 15px;">
+    <p>Seven-L Agrifood Systems, Inc.</p>
+    <p>
+        <a href="#" style="color:#a8e6a2;text-decoration:none;margin:0 5px;">Privacy Policy</a> |
+        <a href="#" style="color:#a8e6a2;text-decoration:none;margin:0 5px;">Terms & Conditions</a> |
+        <a href="#" style="color:#a8e6a2;text-decoration:none;margin:0 5px;">Contact Us</a> |
+        <a href="#" style="color:#a8e6a2;text-decoration:none;margin:0 5px;">Latest News</a>
+    </p>
+    <p>Share:</p>
+    <p>© Seven-L Agrifood Systems, Inc. | All rights reserved. <%=Year(Now) %></p>
+</div>
+
+<style>
+  
+  .capabilities-section {
+    max-width: 1200px;
+    margin: 40px auto;
+    display: flex;
+    gap: 40px;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    flex-wrap: wrap;
+  }
+
+  
+  .capabilities-text {
+    flex: 1 1 400px;
+    min-width: 300px;
+  }
+
+  .capabilities-text h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #0b8a15; 
+    border-bottom: 3px solid #1fa93b;
+    padding-bottom: 8px;
+    max-width: fit-content;
+  }
+
+  .capabilities-text p.intro {
+    font-size: 16px;
+    margin-bottom: 30px;
+    line-height: 1.5;
+  }
+
+  
+  .ha-icon-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  
+  .ha-icon-box-icon {
+    font-size: 32px;
+    color: #1fa93b;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  
+  .ha-icon-box-title {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #1f3b0c; 
+  }
+
+  
+  .capabilities-carousel {
+    flex: 1 1 400px;
+    min-width: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  }
+
+  .capabilities-carousel img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  
+  @media screen and (max-width: 768px) {
+    .capabilities-section {
+      flex-direction: column;
+      gap: 30px;
+    }
+    .capabilities-text, .capabilities-carousel {
+      flex: 1 1 100%;
+      min-width: auto;
+    }
+  }
+</style>
+
+<div id="login" class="page-content hidden">
+    <div class="auth-page">
+        <div class="auth-box">
+            <h2>Login</h2>
+            <input type="text" placeholder="Username / Email"/>
+            <input type="password" placeholder="Password"/>
+            <button>Login</button>
+            <p>Don't have an account? <a href="#register" onclick="showRegister()">Register here</a></p>
+        </div>
+        <div class="auth-box hidden" id="register-box">
+            <h2>Register</h2>
+            <input type="text" placeholder="Full Name"/>
+            <input type="email" placeholder="Email"/>
+            <input type="password" placeholder="Password"/>
+            <input type="password" placeholder="Confirm Password"/>
+            <button>Register</button>
+            <p>Already have an account? <a href="#login" onclick="showLogin()">Login here</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('[data-page], .header-icons a').forEach(el => {
+        el.onclick = () => {
+            let target = el.dataset.page || el.getAttribute('href').replace('#', '');
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            document.getElementById(target)?.classList.remove('hidden');
+            document.querySelector('.menu').classList.remove('active');
+            window.scrollTo(0, 0);
+        };
+    });
+    let ads = document.querySelectorAll('.ads-slider img');
+    let a = 0;
+    setInterval(() => {
+        ads[a].classList.remove('active');
+        a = (a + 1) % ads.length;
+        ads[a].classList.add('active');
+    }, 3000);
+    const sb = document.querySelector('.search-box');
+    const si = sb.querySelector('input');
+    sb.querySelector('i').onclick = () => {
+        sb.classList.toggle('active');
+        if (sb.classList.contains('active')) si.focus();
+    };
+    const hamburger = document.querySelector('.hamburger');
+    const menu = document.querySelector('.menu');
+    hamburger.onclick = () => menu.classList.toggle('active');
+    function showRegister() {
+        document.querySelector('#login .auth-box').classList.add('hidden');
+        document.querySelector('#register-box').classList.remove('hidden');
+    }
+    function showLogin() {
+        document.querySelector('#login .auth-box').classList.remove('hidden');
+        document.querySelector('#register-box').classList.add('hidden');
+    }
+    document.querySelectorAll('.slider-container').forEach(c => {
+        const s = c.querySelector('.slider');
+        c.querySelector('.arrow.left')?.addEventListener('click', () => s.scrollBy({ left: -150, behavior: 'smooth' }));
+        c.querySelector('.arrow.right')?.addEventListener('click', () => s.scrollBy({ left: 150, behavior: 'smooth' }));
+    });
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+        let st = window.scrollY;
+        document.body.classList.toggle('scrolling-down', st > lastScroll);
+        document.body.classList.toggle('scrolling-up', st <= lastScroll);
+        lastScroll = st;
+    });
+
+    function show(p) {
+        switch (p) {
+            case "emka":
+                window.open('https://www.emka-incubators.com/en/');
+                break;
+            case "karoon":
+                window.open('https://www.karoonbrothers.com');
+                break;
+            case "bayle":
+                window.open('https://www.baylesa.com');
+                break;
+            case "yiyuan":
+                window.open('https://www.yiyuan-aquaculture.com');
+                break;
+            case "ecotec":
+                window.open('https://www.ecotec-compo.com');
+                break;
+            case "aza":
+                window.open('https://azainternational.it');
+                break;
+            case "systel":
+                window.open('https://www.systel-international.com/en/');
+                break;
+            case "ntd":
+                window.open('https://ntdfrance.com/?lang=en');
+                break;
+        }
+    }
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

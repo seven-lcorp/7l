@@ -1,0 +1,198 @@
+﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="gallery.aspx.vb" Inherits="gallery" %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta charset="UTF-8"/>
+<title>Seven-L Corporation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+html,body{width:100%;overflow-x:hidden;background:#f4f4f4;color:#000;}
+.hidden{display:none;}
+.info-bar{background:#2f6b3f;color:#fff;padding:6px 15px;display:flex;justify-content:center;gap:20px;font-size:12px;flex-wrap:wrap;}
+.header{position:sticky;top:0;z-index:9999;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.1);transition:box-shadow 0.3s;padding:20px 0;}
+body.scrolling-down .header{box-shadow:0 4px 10px rgba(0,0,0,.2);}
+body.scrolling-up .header{box-shadow:0 2px 5px rgba(0,0,0,.1);}
+.navbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;position:relative;padding:0 20px;}
+.menu{display:flex;gap:12px;font-size:12px;flex-wrap:wrap;transition:0.3s;}
+.menu a{cursor:pointer;color:#000;text-decoration:none;position:relative;transition:0.3s;}
+.menu a:hover{color:#2f6b3f;}
+.menu a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:2px;background:#2f6b3f;transition:0.3s;}
+.menu a:hover::after{width:100%;}
+.logo{width:120px;height:auto;max-height:80px;object-fit:contain;cursor:pointer;margin-left:5px;}
+.header-icons{display:flex;gap:10px;align-items:center;}
+.header-icons a{color:#000;text-decoration:none;font-size:16px;position:relative;transition:0.3s;}
+.header-icons a:hover{color:#2f6b3f;}
+.search-box{position:relative;display:flex;align-items:center;}
+.search-box input{position:absolute;right:25px;width:0;opacity:0;padding:6px 10px;border-radius:15px;border:1px solid #ccc;font-size:12px;transition:0.4s ease;}
+.search-box.active input{width:150px;opacity:1;}
+.search-box i{cursor:pointer;}
+.hamburger{display:none;font-size:22px;cursor:pointer;z-index:10000;}
+@media(max-width:768px){
+.hamburger{display:block;}
+.menu{display:none;position:absolute;top:100%;left:0;width:100%;background:rgba(255,255,255,0.95);flex-direction:column;padding:10px 0;box-shadow:0 4px 10px rgba(0,0,0,.2);}
+.menu.active{display:flex;}
+}
+.top{display:flex;gap:15px;padding:15px;flex-wrap:wrap;min-height:420px;}
+.ads{flex:1;min-width:260px;aspect-ratio:16/9;position:relative;overflow:hidden;border-radius:8px;}
+.ads-slider{width:100%;height:100%;position:relative;}
+.ads-slider img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s ease-in-out;}
+.ads-slider img.active{opacity:1;}
+.video-wrapper{flex:1;min-width:260px;display:flex;flex-direction:column;gap:10px;position:relative;}
+.video{height:180px;overflow:hidden;border-radius:8px;position:relative;}
+.video video{width:100%;height:100%;object-fit:cover;}
+.section{padding:15px;min-height:220px;}
+.section h2{text-align:center;margin-bottom:12px;font-size:16px;}
+.slider-container{width:100%;overflow-x:auto;position:relative;}
+.slider{display:flex;gap:15px;width:max-content;padding-bottom:10px;scroll-behavior:smooth;}
+.centered-slider{justify-content:center;margin:auto;}
+.slider::-webkit-scrollbar{height:6px;}
+.slider::-webkit-scrollbar-thumb{background:#888;border-radius:10px;}
+.box,.tile{flex:0 0 140px;height:180px;border-radius:8px;overflow:hidden;cursor:pointer;position:relative;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform 0.3s,box-shadow 0.3s;}
+.box img,.tile img{width:100%;height:100%;object-fit:cover;}
+.box:hover,.tile:hover{transform:translateY(-5px) scale(1.05);box-shadow:0 6px 15px rgba(0,0,0,.25);}
+.overlay-text{position:absolute;bottom:0;width:100%;background:rgba(0,0,0,.5);color:#fff;font-size:12px;text-align:center;padding:5px;}
+.slider-container .arrow{display:none;position:absolute;top:50%;transform:translateY(-50%);font-size:22px;color:#2f6b3f;cursor:pointer;z-index:10;user-select:none;transition:transform 0.2s ease;}
+.slider-container .arrow:hover{transform:translateY(-50%) scale(1.2);}
+.slider-container .arrow.left{left:-20px;}
+.slider-container .arrow.right{right:-20px;}
+@media(max-width:768px){.slider-container .arrow{display:block;}}
+.auth-page{display:flex;justify-content:center;align-items:flex-start;min-height:80vh;padding:20px;gap:20px;flex-wrap:wrap;}
+.auth-box{background:#fff;padding:20px;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,.2);width:280px;max-width:90%;}
+.auth-box h2{text-align:center;margin-bottom:15px;}
+.auth-box input{width:100%;padding:8px;margin:8px 0;border-radius:5px;border:1px solid #ccc;}
+.auth-box button{width:100%;padding:10px;background:#2f6b3f;color:#fff;border:none;border-radius:5px;cursor:pointer;transition:0.3s;}
+.auth-box button:hover{background:#24512e;}
+.auth-box p{font-size:12px;text-align:center;margin-top:8px;}
+.auth-box a{color:#2f6b3f;text-decoration:none;}
+@media(max-width:768px){
+.top{flex-direction:column;min-height:500px;}
+.ads{height:auto;}
+.search-box.active input{width:130px;}
+.box,.tile{flex:0 0 120px;height:160px;}
+.auth-page{flex-direction:column;align-items:center;}
+.slider,.top,.auth-page{justify-content:center;}
+.box,.tile{margin:auto;}
+}
+@media(max-width:480px){
+.box,.tile{flex:0 0 110px;height:140px;}
+.ads{height:auto;}
+}
+.partners img{transform:scale(1.0);}
+</style>
+</head>
+<body>
+
+<div class="info-bar">
+    <div><i class="fa fa-phone"></i> (046) 853 0532</div>
+    <div><i class="fa fa-envelope"></i> lexuesbio@yahoo.com</div>
+    <div><i class="fa fa-location-dot"></i> Dasmariñas, Cavite</div>
+</div>
+
+
+<div class="header">
+    <div class="navbar">
+        <div class="hamburger"><i class="fa fa-bars"></i></div>
+        <div class="menu">
+            <a href="javascript:home();">HOME</a>
+            <a data-page="about">ABOUT US</a>
+            <a data-page="shop">SHOP</a>
+            <a data-page="services">SERVICES</a>
+            <a data-page="gallery">GALLERY</a>
+            <a data-page="blog">BLOG</a>
+            <a data-page="contact">CONTACT US</a>
+        </div>
+        <img src="images/sevenl.png" class="logo" data-page="home" style="margin-left:5px;"/>
+        <div class="header-icons">
+            <div class="search-box"><i class="fa fa-search"></i><input type="text" placeholder="Search products..."></div>
+            <a href="#favorites"><i class="fa fa-heart"></i></a>
+            <a href="#cart"><i class="fa fa-cart-shopping"></i></a>
+            <a href="#login"><i class="fa fa-user login-icon"></i></a>
+        </div>
+    </div>
+</div>
+
+  
+<script>
+    function home() {
+        window.location = "index.aspx";
+    }
+    document.querySelectorAll('[data-page], .header-icons a').forEach(el => {
+        el.onclick = () => {
+            let target = el.dataset.page || el.getAttribute('href').replace('#', '');
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            document.getElementById(target)?.classList.remove('hidden');
+            document.querySelector('.menu').classList.remove('active');
+            window.scrollTo(0, 0);
+        };
+    });
+    let ads = document.querySelectorAll('.ads-slider img');
+    let a = 0;
+    setInterval(() => {
+        ads[a].classList.remove('active');
+        a = (a + 1) % ads.length;
+        ads[a].classList.add('active');
+    }, 3000);
+    const sb = document.querySelector('.search-box');
+    const si = sb.querySelector('input');
+    sb.querySelector('i').onclick = () => {
+        sb.classList.toggle('active');
+        if (sb.classList.contains('active')) si.focus();
+    };
+    const hamburger = document.querySelector('.hamburger');
+    const menu = document.querySelector('.menu');
+    hamburger.onclick = () => menu.classList.toggle('active');
+    function showRegister() {
+        document.querySelector('#login .auth-box').classList.add('hidden');
+        document.querySelector('#register-box').classList.remove('hidden');
+    }
+    function showLogin() {
+        document.querySelector('#login .auth-box').classList.remove('hidden');
+        document.querySelector('#register-box').classList.add('hidden');
+    }
+    document.querySelectorAll('.slider-container').forEach(c => {
+        const s = c.querySelector('.slider');
+        c.querySelector('.arrow.left')?.addEventListener('click', () => s.scrollBy({ left: -150, behavior: 'smooth' }));
+        c.querySelector('.arrow.right')?.addEventListener('click', () => s.scrollBy({ left: 150, behavior: 'smooth' }));
+    });
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+        let st = window.scrollY;
+        document.body.classList.toggle('scrolling-down', st > lastScroll);
+        document.body.classList.toggle('scrolling-up', st <= lastScroll);
+        lastScroll = st;
+    });
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
